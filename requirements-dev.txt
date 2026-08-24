@@ -1,5 +1,0 @@
--r requirements.txt
-pymupdf
-pytest
-ruff
-yamllint

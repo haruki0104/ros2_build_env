@@ -40,10 +40,7 @@ Each sets `RMW_IMPLEMENTATION` and stops the ROS 2 daemon.
 - `docker-compose.yml` — container config, host mounts, host networking
 - `entrypoint.sh` — sources ROS 2 and workspace setup on shell entry
 - `colcon_ws/src/` — custom ROS 2 packages go here (empty by default)
-- `.github/workflows/ci.yml` — CI: lint, test, compose validation, docker build
-- `tests/` — pytest suite (config in `pyproject.toml`)
-- `requirements.txt` / `requirements-dev.txt` — Python deps for `pdf_to_docx.py` + lint/test tools
-- `pdf_to_docx.py` — unrelated utility (PDF→DOCX converter)
+- `.github/workflows/ci.yml` — CI: lint, compose validation, docker build
 
 ## Git flow
 
@@ -53,12 +50,10 @@ Each sets `RMW_IMPLEMENTATION` and stops the ROS 2 daemon.
 - Bug fixes use `fix/<short-description>` branches off `dev`
 - Open a PR back to `dev` when done; CI must be green before merging
 
-## Lint, test & CI
+## Lint & CI
 
 GitHub Actions CI (`.github/workflows/ci.yml`) runs on pushes/PRs to `main` and `dev`:
 
-- ruff — Python lint (config: `pyproject.toml`)
-- pytest — Python tests (`tests/`)
 - shellcheck — `entrypoint.sh`
 - hadolint — `Dockerfile` (config: `.hadolint.yaml`)
 - yamllint — YAML files (config: `.yamllint.yml`)
@@ -68,9 +63,7 @@ GitHub Actions CI (`.github/workflows/ci.yml`) runs on pushes/PRs to `main` and 
 Run everything locally before pushing:
 
 ```bash
-pip install -r requirements-dev.txt
-ruff check .
-pytest
+pip install yamllint
 yamllint .
 docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable /mnt/entrypoint.sh
 docker run --rm -v "$PWD:/repo" -w /repo hadolint/hadolint hadolint Dockerfile

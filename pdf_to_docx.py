@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import argparse
 import os
 import sys
-import argparse
+
 from pdf2docx import Converter
+
 
 def convert_pdf_to_docx(pdf_path, docx_path=None, start_page=0, end_page=None):
     """
@@ -10,11 +12,11 @@ def convert_pdf_to_docx(pdf_path, docx_path=None, start_page=0, end_page=None):
     """
     # Resolve absolute paths
     pdf_path = os.path.abspath(pdf_path)
-    
+
     if not os.path.exists(pdf_path):
         print(f"Error: The input file '{pdf_path}' does not exist.", file=sys.stderr)
         return False
-    
+
     if not pdf_path.lower().endswith('.pdf'):
         print(f"Error: The input file '{pdf_path}' does not appear to be a PDF file.", file=sys.stderr)
         return False
@@ -23,21 +25,21 @@ def convert_pdf_to_docx(pdf_path, docx_path=None, start_page=0, end_page=None):
         docx_path = os.path.splitext(pdf_path)[0] + '.docx'
     else:
         docx_path = os.path.abspath(docx_path)
-        
+
     print(f"Converting PDF:  {pdf_path}")
     print(f"To Word DOCX:   {docx_path}")
-    
+
     try:
         # Initialize the converter
         cv = Converter(pdf_path)
-        
+
         # Convert the file (start_page is 0-indexed, end_page is exclusive)
         # Setting end_page=None converts until the last page
         cv.convert(docx_path, start=start_page, end=end_page)
-        
+
         # Close the converter
         cv.close()
-        
+
         print("\nConversion successfully completed!")
         print(f"You can now open '{docx_path}' in macOS Pages or Microsoft Word.")
         return True
@@ -50,12 +52,14 @@ def main():
         description="Convert a PDF document into a Word (.docx) format file compatible with macOS Pages."
     )
     parser.add_argument("pdf_file", help="Path to the source PDF file to convert.")
-    parser.add_argument("-o", "--output", help="Optional output path for the Word (.docx) file. Defaults to the same name and directory.")
+    parser.add_argument("-o", "--output",
+                        help="Optional output path for the Word (.docx) file. "
+                             "Defaults to the same name and directory.")
     parser.add_argument("-s", "--start", type=int, default=0, help="Start page index (0-indexed, default: 0).")
     parser.add_argument("-e", "--end", type=int, default=None, help="End page index (exclusive, default: convert all).")
-    
+
     args = parser.parse_args()
-    
+
     success = convert_pdf_to_docx(
         pdf_path=args.pdf_file,
         docx_path=args.output,

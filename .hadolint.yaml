@@ -1,0 +1,9 @@
+# hadolint configuration for the ROS 2 build image
+# Info-level findings (e.g. DL3015, SC2086, SC2028) are tolerated.
+failure-threshold: warning
+
+ignored:
+  # DL3008: apt packages intentionally track the ROS distro base image instead of being pinned
+  - DL3008
+  # DL4006: the rustup install uses the official upstream-recommended `curl | sh` pattern
+  - DL4006

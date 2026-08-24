@@ -1,0 +1,19 @@
+# Python virtualenv
+venv/
+__pycache__/
+
+# Vim swap files
+*.swp
+*.swo
+.*.swp
+
+# AI session logs
+session-ses_*.md
+
+# ROS 2 colcon build artifacts
+colcon_ws/build/
+colcon_ws/install/
+colcon_ws/log/
+
+# macOS
+.DS_Store

@@ -1,0 +1,21 @@
+services:
+  ros2_builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - ROS_DISTRO=jazzy
+    image: ros2-zenoh-build-env:latest
+    container_name: ros2_build_container
+    network_mode: "host"
+    volumes:
+      # Mount the workspace directories to export built packages to the host directory
+      - ./colcon_ws:/workspace/colcon_ws
+    environment:
+      - ROS_DISTRO=jazzy
+      # Optional: set RMW_IMPLEMENTATION to rmw_zenoh_cpp if you want to use Zenoh middleware natively
+      # - RMW_IMPLEMENTATION=rmw_zenoh_cpp
+    stdin_open: true
+    tty: true
+    working_dir: /workspace/colcon_ws
+    command: bash

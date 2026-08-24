@@ -40,8 +40,39 @@ Each sets `RMW_IMPLEMENTATION` and stops the ROS 2 daemon.
 - `docker-compose.yml` — container config, host mounts, host networking
 - `entrypoint.sh` — sources ROS 2 and workspace setup on shell entry
 - `colcon_ws/src/` — custom ROS 2 packages go here (empty by default)
+- `.github/workflows/ci.yml` — CI: lint, test, compose validation, docker build
+- `tests/` — pytest suite (config in `pyproject.toml`)
+- `requirements.txt` / `requirements-dev.txt` — Python deps for `pdf_to_docx.py` + lint/test tools
 - `pdf_to_docx.py` — unrelated utility (PDF→DOCX converter)
 
-## No lint/test/CI
+## Git flow
 
-No linting, testing, or CI pipelines are configured for this repo.
+- `main` — stable releases only
+- `dev` — **default branch**; all integration happens here
+- **Every feature implementation must get its own `feat/<short-description>` branch off `dev`.** Never commit features directly to `dev` or `main`.
+- Bug fixes use `fix/<short-description>` branches off `dev`
+- Open a PR back to `dev` when done; CI must be green before merging
+
+## Lint, test & CI
+
+GitHub Actions CI (`.github/workflows/ci.yml`) runs on pushes/PRs to `main` and `dev`:
+
+- ruff — Python lint (config: `pyproject.toml`)
+- pytest — Python tests (`tests/`)
+- shellcheck — `entrypoint.sh`
+- hadolint — `Dockerfile` (config: `.hadolint.yaml`)
+- yamllint — YAML files (config: `.yamllint.yml`)
+- `docker compose config -q` — compose file validation
+- `docker build .` — full image build check
+
+Run everything locally before pushing:
+
+```bash
+pip install -r requirements-dev.txt
+ruff check .
+pytest
+yamllint .
+docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable /mnt/entrypoint.sh
+docker run --rm -v "$PWD:/repo" -w /repo hadolint/hadolint hadolint Dockerfile
+docker compose config -q
+```
